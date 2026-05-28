@@ -1,0 +1,996 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FATIR TOP UP</title>
+  <style>
+    :root {
+      --bg: 246 52% 8%; --fg: 190 100% 96%; --muted: 218 26% 74%;
+      --panel: 247 47% 14%; --panel-2: 232 48% 18%; --line: 196 100% 68%;
+      --pink: 318 100% 66%; --cyan: 184 100% 57%; --lime: 89 100% 64%;
+      --yellow: 45 100% 62%; --violet: 265 100% 70%; --danger: 0 93% 68%;
+      --shadow: 0 24px 80px hsl(250 80% 4% / .55); --radius: 18px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      min-height: 100vh; color: hsl(var(--fg));
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 8% 12%, hsl(var(--pink) / .28), transparent 28rem),
+        radial-gradient(circle at 92% 8%, hsl(var(--cyan) / .26), transparent 30rem),
+        radial-gradient(circle at 50% 95%, hsl(var(--violet) / .22), transparent 34rem),
+        linear-gradient(135deg, hsl(248 66% 7%), hsl(224 58% 10%) 45%, hsl(275 56% 11%));
+      overflow-x: hidden;
+    }
+    body::before {
+      content:""; position:fixed; inset:0; pointer-events:none;
+      background-image: radial-gradient(hsl(var(--fg)/.5) 1px, transparent 1.6px);
+      background-size: 54px 54px;
+      mask-image: linear-gradient(to bottom, black, transparent 85%);
+      opacity:.3; z-index:-2;
+    }
+    a { color:inherit; text-decoration:none; }
+    button, input, select, textarea { font:inherit; }
+    .wrap { width: min(1180px, calc(100% - 28px)); margin: 0 auto; }
+
+    /* ===== TOPBAR ===== */
+    .topbar {
+      position:sticky; top:0; z-index:50;
+      backdrop-filter:blur(20px);
+      background: hsl(var(--bg)/.82);
+      border-bottom: 1px solid hsl(var(--line)/.16);
+    }
+    .nav { min-height:68px; display:flex; align-items:center; justify-content:space-between; gap:14px; }
+    .brand { display:flex; align-items:center; gap:10px; min-width:0; }
+    .brand-logo {
+      width:42px; height:42px; border-radius:13px; object-fit:cover;
+      background: linear-gradient(135deg, hsl(var(--pink)), hsl(var(--cyan)));
+      box-shadow: 0 0 24px hsl(var(--cyan)/.28); border:1px solid hsl(var(--fg)/.14); flex-shrink:0;
+    }
+    .brand-title { font-size:clamp(1rem,2vw,1.25rem); font-weight:900; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .brand-sub { color:hsl(var(--muted)); font-size:.75rem; margin-top:2px; white-space:nowrap; }
+    .op-dot { display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:5px; vertical-align:middle; }
+    .op-open .op-dot { background:#4ade80; box-shadow:0 0 6px #4ade80; }
+    .op-closed .op-dot { background:#f87171; box-shadow:0 0 6px #f87171; }
+
+    .nav-right { display:flex; gap:8px; align-items:center; position:relative; flex-shrink:0; }
+    .btn {
+      border:0; color:hsl(var(--fg)); cursor:pointer;
+      border-radius:999px; padding:10px 16px; font-weight:800;
+      background:hsl(var(--panel)/.9); border:1px solid hsl(var(--line)/.2);
+      transition:transform .2s, border-color .2s, filter .2s; font-size:.88rem; white-space:nowrap;
+    }
+    .btn:hover { transform:translateY(-2px); border-color:hsl(var(--cyan)/.6); filter:brightness(1.08); }
+    .btn.primary { background:linear-gradient(135deg,hsl(var(--pink)),hsl(var(--cyan))); color:hsl(246 52% 8%); border:0; }
+    .btn.ghost { background:hsl(var(--fg)/.08); }
+    .btn.danger { background:hsl(var(--danger)/.16); color:hsl(var(--danger)); border-color:hsl(var(--danger)/.3); }
+    .btn.login-nav { background:linear-gradient(135deg,hsl(var(--pink)/.3),hsl(var(--cyan)/.3)); border-color:hsl(var(--cyan)/.4); }
+
+    /* ===== LOGIN POPUP ===== */
+    #loginPopup {
+      position:absolute; top:calc(100% + 10px); right:0; width:300px;
+      background:linear-gradient(145deg,hsl(var(--panel)),hsl(var(--panel-2)));
+      border:1px solid hsl(var(--line)/.28); border-radius:20px; padding:20px;
+      box-shadow:var(--shadow); display:none; z-index:200;
+    }
+    #loginPopup.show { display:block; animation:popIn .2s ease; }
+    #loginPopup h3 { font-size:1rem; margin-bottom:14px; }
+    .lf {
+      width:100%; padding:10px 13px; margin-bottom:10px;
+      border-radius:12px; border:1px solid hsl(var(--line)/.2);
+      background:hsl(var(--bg)/.7); color:hsl(var(--fg)); font-size:.9rem;
+    }
+    .lf:focus { outline:2px solid hsl(var(--cyan)/.4); border-color:transparent; }
+    .login-do-btn {
+      width:100%; padding:11px; border:0; border-radius:12px;
+      background:linear-gradient(135deg,hsl(var(--pink)),hsl(var(--cyan)));
+      color:hsl(246 52% 8%); font-weight:800; cursor:pointer; transition:filter .2s;
+    }
+    .login-do-btn:hover { filter:brightness(1.1); }
+    .login-err { color:hsl(var(--danger)); font-size:.8rem; margin-top:8px; display:none; }
+    .admin-badge {
+      display:none; align-items:center; gap:6px;
+      background:hsl(var(--lime)/.18); color:hsl(var(--lime));
+      border:1px solid hsl(var(--lime)/.3); border-radius:999px;
+      padding:8px 14px; font-size:.82rem; font-weight:800;
+    }
+
+    /* ===== BANNER / HERO ===== */
+    #siteBanner { width:100%; max-height:260px; object-fit:cover; border-radius:20px; margin:16px 0 0; border:1px solid hsl(var(--line)/.18); display:none; }
+    #siteBanner.visible { display:block; }
+    .hero { padding:26px 0 20px; }
+    .hero h1 { font-size:clamp(1.9rem,6vw,4rem); line-height:.94; margin-bottom:8px; }
+    .hero h1 span { background:linear-gradient(110deg,hsl(var(--fg)),hsl(var(--cyan)),hsl(var(--lime)),hsl(var(--pink))); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .hero p { color:hsl(var(--muted)); font-size:clamp(.9rem,1.8vw,1.1rem); line-height:1.6; max-width:640px; }
+    #siteDesc { display:none; }
+    #siteDesc.visible { display:block; }
+
+    /* ===== OPERATIONAL TIME BANNER ===== */
+    #opBanner {
+      display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+      margin:14px 0 0; padding:12px 18px; border-radius:16px;
+      background:hsl(var(--panel)/.7); border:1px solid hsl(var(--line)/.15);
+      font-size:.88rem;
+    }
+    #opBanner .op-title { font-weight:800; color:hsl(var(--fg)); }
+    #opBanner .op-time { color:hsl(var(--cyan)); font-weight:700; }
+    #opBanner .op-status { margin-left:auto; font-weight:800; font-size:.82rem; padding:4px 12px; border-radius:99px; }
+    .op-open-status { background:hsl(89 100% 64%/.15); color:hsl(var(--lime)); border:1px solid hsl(var(--lime)/.3); }
+    .op-closed-status { background:hsl(0 93% 68%/.15); color:hsl(var(--danger)); border:1px solid hsl(var(--danger)/.3); }
+
+    /* ===== TABS ===== */
+    .tab-bar {
+      display:flex; gap:0; margin:16px 0 0;
+      background:hsl(var(--panel)/.7); border-radius:16px; padding:5px;
+      border:1px solid hsl(var(--line)/.16);
+    }
+    .tab-btn { flex:1; padding:12px; border:0; border-radius:12px; font-weight:800; font-size:.95rem; cursor:pointer; background:transparent; color:hsl(var(--muted)); transition:all .2s; }
+    .tab-btn.active { background:linear-gradient(135deg,hsl(var(--pink)/.8),hsl(var(--cyan)/.8)); color:hsl(246 52% 8%); box-shadow:0 4px 16px hsl(var(--cyan)/.2); }
+
+    /* ===== TOOLBAR ===== */
+    .toolbar { display:flex; gap:10px; align-items:center; margin:14px 0 18px; flex-wrap:wrap; }
+    .search-wrap { flex:1; min-width:200px; position:relative; }
+    .search-wrap svg { position:absolute; left:13px; top:50%; transform:translateY(-50%); opacity:.45; }
+    .search-input {
+      width:100%; padding:12px 14px 12px 40px; border-radius:999px;
+      border:1px solid hsl(var(--line)/.2);
+      background:hsl(var(--panel)/.8); color:hsl(var(--fg)); font-size:.92rem;
+    }
+    .search-input::placeholder { color:hsl(var(--muted)/.7); }
+    .search-input:focus { outline:2px solid hsl(var(--cyan)/.4); border-color:transparent; }
+    .cat-select { padding:12px 16px; border-radius:999px; border:1px solid hsl(var(--line)/.2); background:hsl(var(--panel)/.8); color:hsl(var(--fg)); font-size:.9rem; min-width:160px; }
+
+    /* ===== GAME GRID ===== */
+    .game-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; padding-bottom:40px; }
+    .game-card {
+      background:hsl(var(--panel)/.9); border:1px solid hsl(var(--line)/.14);
+      border-radius:18px; overflow:hidden; cursor:pointer;
+      transition:transform .22s, border-color .22s, box-shadow .22s;
+      position:relative; display:flex; flex-direction:column;
+    }
+    .game-card:hover { transform:translateY(-4px); border-color:hsl(var(--cyan)/.5); box-shadow:0 16px 48px hsl(var(--cyan)/.12); }
+    .game-card-img { width:100%; aspect-ratio:1/1; object-fit:cover; display:block; }
+    .game-card-fallback { width:100%; aspect-ratio:1/1; display:grid; place-items:center; font-size:2.2rem; font-weight:950; background:linear-gradient(135deg,hsl(var(--game-accent)),hsl(var(--panel-2))); color:hsl(246 52% 8%); }
+    .game-card-name { padding:8px 10px 10px; font-size:.82rem; font-weight:700; text-align:center; color:hsl(var(--fg)); background:hsl(var(--panel)); border-top:1px solid hsl(var(--line)/.1); }
+    .game-badge { position:absolute; top:8px; left:0; padding:3px 10px; font-size:.68rem; font-weight:800; color:#fff; border-radius:0 8px 8px 0; text-transform:uppercase; letter-spacing:.04em; }
+    .badge-hot { background:#e63946; }
+    .badge-habis { background:#e63946; }
+    .badge-terlaris { background:#f4a261; }
+    .empty-state { grid-column:1/-1; text-align:center; padding:40px 20px; color:hsl(var(--muted)); border:1px dashed hsl(var(--line)/.3); border-radius:20px; display:none; }
+
+    /* ===== CHECKOUT OVERLAY ===== */
+    .checkout-overlay {
+      position:fixed; inset:0; z-index:80;
+      background:hsl(246 52% 4%/.7); backdrop-filter:blur(8px);
+      display:flex; align-items:flex-end; justify-content:center;
+      opacity:0; pointer-events:none; transition:opacity .25s;
+    }
+    .checkout-overlay.open { opacity:1; pointer-events:all; }
+    .checkout-panel {
+      width:min(520px,100%); max-height:90vh; overflow-y:auto;
+      border-radius:28px 28px 0 0;
+      background:hsl(var(--bg)); border:1px solid hsl(var(--line)/.2); border-bottom:0;
+      box-shadow:0 -20px 60px hsl(250 80% 4%/.6); padding:20px;
+      transform:translateY(60px); transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+    }
+    .checkout-overlay.open .checkout-panel { transform:translateY(0); }
+    .drag-handle { width:44px; height:5px; background:hsl(var(--fg)/.2); border-radius:99px; margin:0 auto 18px; }
+    .co-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+    .co-header h2 { font-size:1.1rem; }
+    .co-close { width:36px; height:36px; border-radius:50%; background:hsl(var(--fg)/.1); border:0; color:hsl(var(--fg)); cursor:pointer; font-size:1.2rem; display:grid; place-items:center; }
+    .sec-label { font-size:.76rem; font-weight:900; text-transform:uppercase; letter-spacing:.08em; color:hsl(var(--muted)); margin:14px 0 8px; }
+
+    /* Packs */
+    .pack-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+    .pack-btn { padding:12px; border-radius:14px; border:1.5px solid hsl(var(--line)/.18); background:hsl(var(--panel)/.7); color:hsl(var(--fg)); cursor:pointer; text-align:left; transition:all .2s; }
+    .pack-btn:hover, .pack-btn.active { border-color:hsl(var(--cyan)); background:hsl(var(--cyan)/.12); }
+    .pack-btn b { display:block; font-size:.9rem; }
+    .pack-btn small { color:hsl(var(--muted)); font-size:.82rem; }
+
+    /* Payment */
+    .pay-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+    .pay-btn {
+      padding:11px 8px; border-radius:14px; border:1.5px solid hsl(var(--line)/.18);
+      background:hsl(var(--panel)/.6); cursor:pointer;
+      display:flex; flex-direction:column; align-items:center; gap:6px;
+      transition:all .2s; color:hsl(var(--fg));
+    }
+    .pay-btn:hover, .pay-btn.active { border-color:hsl(var(--cyan)); background:hsl(var(--cyan)/.12); }
+    .pay-logo-img { width:50px; height:30px; object-fit:contain; }
+    .pay-logo-emoji { font-size:1.5rem; line-height:1; }
+    .pay-label { font-size:.76rem; font-weight:800; }
+
+    /* Promo */
+    .promo-row { display:flex; gap:8px; }
+    .promo-input { flex:1; padding:10px 14px; border-radius:12px; border:1px solid hsl(var(--line)/.2); background:hsl(var(--bg)/.6); color:hsl(var(--fg)); font-size:.88rem; text-transform:uppercase; }
+    .promo-apply { padding:10px 16px; border-radius:12px; border:0; background:hsl(var(--lime)/.2); color:hsl(var(--lime)); font-weight:800; cursor:pointer; border:1px solid hsl(var(--lime)/.3); white-space:nowrap; transition:all .2s; font-size:.85rem; }
+    .promo-apply:hover { background:hsl(var(--lime)/.3); }
+    .promo-ok { color:hsl(var(--lime)); font-size:.8rem; margin-top:6px; display:none; }
+    .promo-err { color:hsl(var(--danger)); font-size:.8rem; margin-top:6px; display:none; }
+
+    /* Summary */
+    .summary { margin-top:14px; border-radius:16px; padding:14px; background:hsl(var(--panel)/.6); border:1px solid hsl(var(--line)/.12); }
+    .sum-row { display:flex; justify-content:space-between; gap:10px; padding:5px 0; font-size:.87rem; color:hsl(var(--muted)); }
+    .sum-row strong { color:hsl(var(--fg)); }
+    .sum-row.total { font-weight:800; font-size:.95rem; border-top:1px solid hsl(var(--line)/.15); margin-top:4px; padding-top:10px; }
+    .sum-disc { color:hsl(var(--lime)) !important; display:none; }
+
+    /* ===== SETTINGS DIALOG ===== */
+    dialog { border:0; padding:0; color:hsl(var(--fg)); background:transparent; width:min(580px,calc(100% - 24px)); max-height:92vh; }
+    dialog::backdrop { background:hsl(246 52% 4%/.78); backdrop-filter:blur(10px); }
+    .modal { border-radius:24px; padding:24px; background:linear-gradient(145deg,hsl(var(--panel)),hsl(var(--panel-2))); border:1px solid hsl(var(--line)/.24); box-shadow:var(--shadow); overflow-y:auto; max-height:88vh; }
+    .modal h2 { margin-bottom:18px; font-size:1.2rem; }
+    .ms { margin-bottom:20px; border-top:1px solid hsl(var(--line)/.12); padding-top:16px; }
+    .ms:first-of-type { border-top:0; padding-top:0; }
+    .ms h3 { font-size:.8rem; text-transform:uppercase; letter-spacing:.08em; color:hsl(var(--cyan)); margin-bottom:12px; }
+    .mf-label { display:grid; gap:6px; margin:10px 0; font-size:.82rem; font-weight:700; color:hsl(var(--muted)); }
+    .mf { width:100%; padding:11px 14px; border-radius:12px; border:1px solid hsl(var(--line)/.2); background:hsl(var(--bg)/.6); color:hsl(var(--fg)); font-size:.9rem; }
+    .mf:focus { outline:2px solid hsl(var(--cyan)/.4); border-color:transparent; }
+    textarea.mf { resize:vertical; min-height:70px; border-radius:13px; }
+    .row2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:18px; flex-wrap:wrap; }
+
+    /* Payment logo settings */
+    .pay-setting-grid { display:grid; gap:14px; margin-top:10px; }
+    .pay-setting-item { background:hsl(var(--bg)/.4); border:1px solid hsl(var(--line)/.15); border-radius:14px; padding:14px; }
+    .pay-setting-item h4 { font-size:.85rem; font-weight:800; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+    .pay-preview { display:flex; align-items:center; gap:10px; margin-top:8px; }
+    .pay-preview img { width:56px; height:36px; object-fit:contain; border-radius:8px; border:1px solid hsl(var(--line)/.2); background:white; padding:4px; }
+    .pay-preview-placeholder { width:56px; height:36px; border-radius:8px; border:1px dashed hsl(var(--line)/.3); display:flex; align-items:center; justify-content:center; font-size:1.2rem; background:hsl(var(--panel)/.4); }
+    .pay-preview-text { font-size:.78rem; color:hsl(var(--muted)); }
+
+    /* Promo manager */
+    .promo-list { display:grid; gap:8px; margin-top:8px; }
+    .promo-item { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-radius:12px; background:hsl(var(--bg)/.5); border:1px solid hsl(var(--line)/.12); }
+    .promo-code { font-family:monospace; font-weight:800; color:hsl(var(--lime)); font-size:.95rem; }
+    .promo-disc { color:hsl(var(--muted)); font-size:.8rem; }
+    .promo-del { padding:5px 10px; border-radius:8px; border:0; background:hsl(var(--danger)/.14); color:hsl(var(--danger)); cursor:pointer; font-size:.78rem; font-weight:700; }
+    .add-promo { display:grid; grid-template-columns:1fr 1fr auto; gap:8px; margin-top:10px; align-items:end; }
+    .add-promo input { padding:10px 12px; border-radius:10px; border:1px solid hsl(var(--line)/.2); background:hsl(var(--bg)/.5); color:hsl(var(--fg)); font-size:.88rem; }
+    .add-promo-btn { padding:10px 14px; border-radius:10px; border:0; background:hsl(var(--lime)/.18); color:hsl(var(--lime)); font-weight:800; cursor:pointer; border:1px solid hsl(var(--lime)/.3); white-space:nowrap; }
+
+    /* Op time settings */
+    .op-setting-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
+    .op-day-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:10px; }
+    .day-check { display:flex; align-items:center; gap:6px; cursor:pointer; font-size:.85rem; font-weight:700; }
+    .day-check input[type=checkbox] { width:16px; height:16px; accent-color:hsl(var(--cyan)); }
+
+    /* ===== WA BUTTON ===== */
+    #waBtn {
+      position:fixed; right:20px; bottom:20px; width:56px; height:56px; border-radius:50%;
+      background:linear-gradient(135deg,#25d366,#128c7e);
+      border:0; cursor:pointer; display:grid; place-items:center;
+      box-shadow:0 8px 28px rgba(37,211,102,.4); z-index:90; transition:transform .2s;
+    }
+    #waBtn:hover { transform:scale(1.12); }
+    #waBtn svg { width:26px; height:26px; fill:white; }
+    #waPopup {
+      position:fixed; right:84px; bottom:18px;
+      background:hsl(var(--panel)); border:1px solid hsl(var(--line)/.2);
+      border-radius:16px; padding:13px 16px; z-index:91;
+      box-shadow:var(--shadow); font-size:.88rem; max-width:210px; display:none;
+    }
+    #waPopup.show { display:block; animation:popIn .2s ease; }
+    #waPopup strong { display:block; margin-bottom:3px; font-size:.9rem; }
+    #waPopup a { color:#25d366; font-weight:700; display:block; margin-top:7px; font-size:.85rem; }
+
+    @keyframes popIn { from { opacity:0; transform:scale(.9) translateX(8px); } to { opacity:1; transform:scale(1); } }
+
+    @media (max-width:720px) {
+      .game-grid { grid-template-columns:repeat(3,1fr); gap:10px; }
+      .row2 { grid-template-columns:1fr; }
+      .add-promo { grid-template-columns:1fr 1fr; }
+      .add-promo-btn { grid-column:1/-1; }
+      .op-day-grid { grid-template-columns:repeat(4,1fr); }
+    }
+    @media (max-width:440px) {
+      .game-grid { grid-template-columns:repeat(2,1fr); }
+      .pack-grid { grid-template-columns:1fr; }
+    }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important; transition:none!important; } }
+  </style>
+</head>
+<body>
+
+<!-- ===== TOPBAR ===== -->
+<header class="topbar">
+  <nav class="wrap nav">
+    <div class="brand">
+      <img class="brand-logo" id="brandLogo" alt="Logo"
+        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop stop-color='%23ff52c8'/%3E%3Cstop offset='1' stop-color='%2324f0ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='120' height='120' rx='32' fill='url(%23g)'/%3E%3Cpath d='M32 76c18-47 48-47 56 0M42 58h36M49 43h22' stroke='%23120722' stroke-width='10' stroke-linecap='round' fill='none'/%3E%3C/svg%3E" />
+      <div>
+        <div class="brand-title" id="storeNameNav">FATIR TOP UP</div>
+        <div class="brand-sub" id="navOpStatus">
+          <span class="op-dot"></span><span id="navOpText">Operational Time</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <div class="admin-badge" id="adminBadge">✅ Admin</div>
+      <button class="btn login-nav" id="loginNavBtn" type="button">🔐 Login Admin</button>
+      <button class="btn danger" id="logoutBtn" type="button" style="display:none;">Logout</button>
+      <button class="btn primary" id="settingsBtn" type="button" style="display:none;">⚙ Setting</button>
+      <div id="loginPopup">
+        <h3>🔐 Login Admin</h3>
+        <input class="lf" id="loginUser" type="text" placeholder="Username" autocomplete="username" />
+        <input class="lf" id="loginPass" type="password" placeholder="Password" autocomplete="current-password" />
+        <button class="login-do-btn" id="loginDoBtn" type="button">Masuk →</button>
+        <div class="login-err" id="loginErr">❌ Username atau password salah!</div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main class="wrap">
+  <img id="siteBanner" alt="Banner" />
+
+  <section class="hero">
+    <h1><span id="storeNameHero">FATIR TOP UP</span></h1>
+    <p id="siteDesc"></p>
+  </section>
+
+  <!-- Operational Time Banner -->
+  <div id="opBanner">
+    <div>
+      <div class="op-title">🕐 Operational Time</div>
+      <div class="op-time" id="opTimeDisplay">Senin – Minggu &nbsp;|&nbsp; 08:00 – 22:00</div>
+    </div>
+    <div class="op-status" id="opStatusBadge">●  Buka</div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="topup" type="button">🎮 Top Up</button>
+    <button class="tab-btn" data-tab="voucher" type="button">🎟️ Voucher</button>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar" style="margin-top:14px;">
+    <div class="search-wrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input class="search-input" id="searchInput" placeholder="Cari game atau voucher..." autocomplete="off" />
+    </div>
+    <select class="cat-select" id="categorySelect">
+      <option value="all">Semua kategori</option>
+      <option value="MOBA">MOBA</option>
+      <option value="Battle Royale">Battle Royale</option>
+      <option value="RPG">RPG</option>
+      <option value="Sports">Sports</option>
+      <option value="FPS">FPS</option>
+      <option value="Casual">Casual</option>
+    </select>
+  </div>
+
+  <!-- Game Grid -->
+  <div class="game-grid" id="gameGrid">
+    <div class="empty-state" id="emptyState">Tidak ditemukan. Coba kata kunci lain.</div>
+  </div>
+</main>
+
+<!-- ===== CHECKOUT ===== -->
+<div class="checkout-overlay" id="checkoutOverlay">
+  <div class="checkout-panel">
+    <div class="drag-handle"></div>
+    <div class="co-header">
+      <h2 id="coGameTitle">Pilih Paket</h2>
+      <button class="co-close" id="coClose" type="button">×</button>
+    </div>
+    <div class="sec-label">ID / User ID</div>
+    <input class="search-input" id="playerId" placeholder="Masukkan ID game kamu" style="border-radius:12px;" />
+    <div class="sec-label" style="margin-top:10px;">Server / Nickname</div>
+    <input class="search-input" id="serverId" placeholder="Opsional" style="border-radius:12px;" />
+    <div class="sec-label">Paket Top Up</div>
+    <div class="pack-grid" id="packGrid"></div>
+    <div class="sec-label">Metode Pembayaran</div>
+    <div class="pay-grid" id="payGrid">
+      <button class="pay-btn active" data-pay="DANA" type="button">
+        <div class="pay-logo-emoji" id="payEl0">💙</div>
+        <div class="pay-label">DANA</div>
+      </button>
+      <button class="pay-btn" data-pay="GoPay" type="button">
+        <div class="pay-logo-emoji" id="payEl1">💚</div>
+        <div class="pay-label">GoPay</div>
+      </button>
+      <button class="pay-btn" data-pay="QR" type="button">
+        <div class="pay-logo-emoji" id="payEl2">📱</div>
+        <div class="pay-label">Scan QR</div>
+      </button>
+    </div>
+    <div class="sec-label">Kode Promo</div>
+    <div class="promo-row">
+      <input class="promo-input" id="promoInput" placeholder="Masukkan kode promo" />
+      <button class="promo-apply" id="applyPromo" type="button">Terapkan</button>
+    </div>
+    <div class="promo-ok" id="promoOk"></div>
+    <div class="promo-err" id="promoErr"></div>
+    <div class="summary">
+      <div class="sum-row"><span>Game</span><strong id="sumGame">-</strong></div>
+      <div class="sum-row"><span>Paket</span><strong id="sumPack">-</strong></div>
+      <div class="sum-row"><span>Pembayaran</span><strong id="sumPay">DANA</strong></div>
+      <div class="sum-row sum-disc" id="discRow"><span>Diskon</span><strong id="sumDisc">-</strong></div>
+      <div class="sum-row total"><span>Total</span><strong id="sumTotal">Rp0</strong></div>
+    </div>
+    <button class="btn primary" id="orderBtn" type="button" style="width:100%;margin-top:14px;padding:14px;border-radius:14px;font-size:1rem;">📲 Buat Pesanan via WhatsApp</button>
+  </div>
+</div>
+
+<!-- ===== SETTINGS DIALOG ===== -->
+<dialog id="settingsDialog">
+  <div class="modal">
+    <h2>⚙️ Setting Website</h2>
+
+    <!-- Identitas -->
+    <div class="ms" style="border-top:0;padding-top:0;">
+      <h3>🏪 Identitas Toko</h3>
+      <label class="mf-label">Nama toko <input class="mf" id="sName" placeholder="FATIR TOP UP" /></label>
+      <label class="mf-label">Link logo (URL) <input class="mf" id="sLogo" placeholder="https://i.imgur.com/..." /></label>
+      <label class="mf-label">Nomor WhatsApp admin <input class="mf" id="sWa" placeholder="628xxxxxxxxxx" /></label>
+    </div>
+
+    <!-- Banner & Desc -->
+    <div class="ms">
+      <h3>🖼️ Banner & Deskripsi</h3>
+      <label class="mf-label">Link banner (URL gambar) <input class="mf" id="sBanner" placeholder="https://i.imgur.com/..." /></label>
+      <label class="mf-label">Deskripsi toko <textarea class="mf" id="sDesc" placeholder="Top up cepat, murah, aman 24 jam..."></textarea></label>
+    </div>
+
+    <!-- Operational Time -->
+    <div class="ms">
+      <h3>🕐 Operational Time</h3>
+      <div class="op-setting-row">
+        <label class="mf-label">Jam Buka <input class="mf" id="sOpOpen" type="time" value="08:00" /></label>
+        <label class="mf-label">Jam Tutup <input class="mf" id="sOpClose" type="time" value="22:00" /></label>
+      </div>
+      <div style="font-size:.82rem;font-weight:700;color:hsl(218 26% 74%);margin:12px 0 6px;">Hari Operasional</div>
+      <div class="op-day-grid" id="opDayGrid">
+        <label class="day-check"><input type="checkbox" data-day="0" checked /> Sen</label>
+        <label class="day-check"><input type="checkbox" data-day="1" checked /> Sel</label>
+        <label class="day-check"><input type="checkbox" data-day="2" checked /> Rab</label>
+        <label class="day-check"><input type="checkbox" data-day="3" checked /> Kam</label>
+        <label class="day-check"><input type="checkbox" data-day="4" checked /> Jum</label>
+        <label class="day-check"><input type="checkbox" data-day="5" checked /> Sab</label>
+        <label class="day-check"><input type="checkbox" data-day="6" checked /> Min</label>
+      </div>
+      <label class="mf-label" style="margin-top:10px;">Catatan tambahan (opsional) <input class="mf" id="sOpNote" placeholder="cth: Libur Nasional mungkin tutup" /></label>
+    </div>
+
+    <!-- Payment Logos -->
+    <div class="ms">
+      <h3>💳 Logo Pembayaran</h3>
+      <p style="font-size:.8rem;color:hsl(218 26% 74%);margin-bottom:12px;">Bisa pakai URL gambar dari internet (imgur, Google Drive, dll) atau nama file dari folder images/</p>
+      <div class="pay-setting-grid">
+        <!-- DANA -->
+        <div class="pay-setting-item">
+          <h4>💙 DANA</h4>
+          <label class="mf-label">URL atau nama file logo
+            <input class="mf" id="pLogoDana" placeholder="https://... atau dana.png" oninput="previewPayLogo('dana',this.value)" />
+          </label>
+          <div class="pay-preview">
+            <div class="pay-preview-placeholder" id="prevDana">💙</div>
+            <div class="pay-preview-text">Preview logo</div>
+          </div>
+        </div>
+        <!-- GoPay -->
+        <div class="pay-setting-item">
+          <h4>💚 GoPay</h4>
+          <label class="mf-label">URL atau nama file logo
+            <input class="mf" id="pLogoGopay" placeholder="https://... atau gopay.png" oninput="previewPayLogo('gopay',this.value)" />
+          </label>
+          <div class="pay-preview">
+            <div class="pay-preview-placeholder" id="prevGopay">💚</div>
+            <div class="pay-preview-text">Preview logo</div>
+          </div>
+        </div>
+        <!-- QR -->
+        <div class="pay-setting-item">
+          <h4>📱 Scan QR</h4>
+          <label class="mf-label">URL atau nama file logo/QR
+            <input class="mf" id="pLogoQr" placeholder="https://... atau qr.png" oninput="previewPayLogo('qr',this.value)" />
+          </label>
+          <div class="pay-preview">
+            <div class="pay-preview-placeholder" id="prevQr">📱</div>
+            <div class="pay-preview-text">Preview logo</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Promo -->
+    <div class="ms">
+      <h3>🏷️ Kelola Kode Promo</h3>
+      <div class="promo-list" id="promoList"></div>
+      <div class="add-promo">
+        <input class="mf" id="newCode" placeholder="Kode (cth: HEMAT10)" style="border-radius:10px;" />
+        <input class="mf" id="newDisc" type="number" min="1" max="99" placeholder="Diskon %" style="border-radius:10px;" />
+        <button class="add-promo-btn" id="addPromoBtn" type="button">+ Tambah</button>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn ghost" id="cancelSettings" type="button">Batal</button>
+      <button class="btn primary" id="saveSettings" type="button">💾 Simpan</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- ===== WA ===== -->
+<div id="waPopup">
+  <strong>💬 Butuh bantuan?</strong>
+  <span id="waText">Hubungi admin kami!</span>
+  <a id="waLink" href="#" target="_blank">Buka WhatsApp →</a>
+</div>
+<button id="waBtn" type="button" title="Chat Admin">
+  <svg viewBox="0 0 32 32"><path d="M16 .5C7.5.5.5 7.5.5 16c0 2.7.7 5.3 2 7.6L.5 31.5l8.2-2c2.2 1.2 4.7 1.9 7.3 1.9 8.5 0 15.5-7 15.5-15.5S24.5.5 16 .5zm0 28.3c-2.3 0-4.5-.6-6.4-1.8l-.5-.3-4.9 1.2 1.3-4.7-.3-.5C3.8 20.7 3.2 18.4 3.2 16 3.2 9.3 8.8 3.7 16 3.7c7.1 0 12.8 5.6 12.8 12.3 0 6.8-5.7 12.3-12.8 12.3zm6.8-9.2c-.4-.2-2.2-1.1-2.5-1.2-.4-.1-.6-.2-.9.2-.3.4-1 1.2-1.3 1.5-.2.3-.5.3-.9.1-.4-.2-1.6-.6-3-1.8-1.1-1-1.9-2.2-2.1-2.6-.2-.4 0-.6.2-.8.2-.2.4-.5.6-.7.2-.2.2-.4.4-.6.1-.3 0-.5-.1-.7-.1-.2-.9-2.2-1.2-3-.3-.8-.7-.7-.9-.7h-.8c-.3 0-.7.1-1 .4-.4.4-1.4 1.3-1.4 3.2s1.4 3.7 1.6 4c.2.3 2.8 4.2 6.7 5.9.9.4 1.7.6 2.2.8.9.3 1.8.2 2.4.2.7-.1 2.2-.9 2.5-1.8.3-.8.3-1.6.2-1.7-.1-.3-.4-.4-.8-.5z"/></svg>
+</button>
+
+<script>
+// ===== CREDENTIALS =====
+const ADMIN_USER = "Fatir";
+const ADMIN_PASS = "Fatir1010";
+
+// ===== GAME DEFINITIONS (no prices here — prices from harga.json) =====
+const TOPUP_GAMES = [
+  { name:"Free Fire",       cat:"Battle Royale", code:"FF",  accent:"45 100% 62%",  img:"images/free-fire.jpg",       badge:"hot" },
+  { name:"Free Fire Max",   cat:"Battle Royale", code:"FFM", accent:"35 100% 58%",  img:"images/free-fire-max.jpg",   badge:"hot" },
+  { name:"Mobile Legends",  cat:"MOBA",          code:"ML",  accent:"318 100% 66%", img:"images/mobile-legends.jpg",  badge:"hot" },
+  { name:"PUBG Mobile",     cat:"Battle Royale", code:"PB",  accent:"89 100% 64%",  img:"images/pubg-mobile.jpg" },
+  { name:"Genshin Impact",  cat:"RPG",           code:"GI",  accent:"184 100% 57%", img:"images/genshin-impact.jpg" },
+  { name:"Arena of Valor",  cat:"MOBA",          code:"AV",  accent:"205 100% 66%", img:"images/arena-of-valor.jpg" },
+  { name:"Stumble Guys",    cat:"Casual",        code:"SG",  accent:"165 100% 58%", img:"images/stumble-guys.jpg",    badge:"habis" },
+  { name:"Call of Duty",    cat:"FPS",           code:"CD",  accent:"35 100% 60%",  img:"images/cod-mobile.jpg" },
+  { name:"Eggy Party",      cat:"Casual",        code:"EP",  accent:"52 100% 65%",  img:"images/eggy-party.jpg" },
+  { name:"Top Eleven",      cat:"Sports",        code:"TE",  accent:"112 90% 55%",  img:"images/top-eleven.jpg" },
+  { name:"Arena Breakout",  cat:"FPS",           code:"AB",  accent:"25 80% 55%",   img:"images/arena-breakout.jpg" },
+  { name:"Marvel Super War",cat:"MOBA",          code:"MSW", accent:"0 93% 68%",    img:"images/marvel-super-war.jpg" },
+  { name:"Speed Drifter",   cat:"Sports",        code:"SD",  accent:"200 100% 62%", img:"images/speed-drifter.jpg" },
+  { name:"Life After",      cat:"RPG",           code:"LA",  accent:"75 80% 55%",   img:"images/life-after.jpg" },
+  { name:"Zepeto",          cat:"Casual",        code:"ZP",  accent:"265 100% 70%", img:"images/zepeto.jpg" },
+  { name:"Hago",            cat:"Casual",        code:"HG",  accent:"45 100% 62%",  img:"images/hago.jpg" },
+  { name:"Tumile",          cat:"Casual",        code:"TM",  accent:"28 100% 60%",  img:"images/tumile.jpg" },
+  { name:"Honor of Kings",  cat:"MOBA",          code:"HK",  accent:"12 100% 67%",  img:"images/honor-of-kings.jpg" },
+  { name:"Honkai: Star Rail",cat:"RPG",          code:"HS",  accent:"265 100% 70%", img:"images/honkai-star-rail.jpg" },
+  { name:"Zenless Zone Zero",cat:"RPG",          code:"ZZ",  accent:"55 100% 66%",  img:"images/zenless-zone-zero.jpg" },
+  { name:"Wild Rift",       cat:"MOBA",          code:"WR",  accent:"190 100% 62%", img:"images/wild-rift.jpg" },
+  { name:"Clash of Clans",  cat:"Casual",        code:"CC",  accent:"25 100% 62%",  img:"images/clash-of-clans.jpg" },
+  { name:"Clash Royale",    cat:"Casual",        code:"CR",  accent:"220 100% 68%", img:"images/clash-royale.jpg" },
+  { name:"Brawl Stars",     cat:"Casual",        code:"BS",  accent:"52 100% 60%",  img:"images/brawl-stars.jpg" },
+  { name:"Higgs Domino",    cat:"Casual",        code:"HD",  accent:"44 100% 62%",  img:"images/higgs-domino.jpg" },
+  { name:"Point Blank",     cat:"FPS",           code:"PK",  accent:"10 100% 64%",  img:"images/point-blank.jpg" },
+  { name:"Roblox",          cat:"Casual",        code:"RB",  accent:"210 90% 72%",  img:"images/roblox.jpg" },
+  { name:"Minecraft",       cat:"Casual",        code:"MC",  accent:"118 85% 64%",  img:"images/minecraft.jpg" },
+  { name:"FC Mobile",       cat:"Sports",        code:"FC",  accent:"145 90% 55%",  img:"images/fc-mobile.jpg" },
+  { name:"Wuthering Waves", cat:"RPG",           code:"WW",  accent:"178 100% 58%", img:"images/wuthering-waves.jpg" },
+  { name:"Blood Strike",    cat:"FPS",           code:"BK",  accent:"355 90% 65%",  img:"images/blood-strike.jpg" },
+  { name:"Ragnarok X",      cat:"RPG",           code:"RX",  accent:"280 100% 72%", img:"images/ragnarok-x.jpg" },
+];
+const VOUCHER_GAMES = [
+  { name:"Roblox",        cat:"Voucher", code:"RB", accent:"210 90% 72%", img:"images/roblox.jpg" },
+  { name:"Google Play ID",cat:"Voucher", code:"GP", accent:"89 100% 55%", img:"images/google-play.jpg", badge:"terlaris" },
+  { name:"Garena Shell",  cat:"Voucher", code:"GS", accent:"45 100% 62%", img:"images/garena-shell.jpg" },
+  { name:"WeTV",          cat:"Voucher", code:"WT", accent:"55 90% 62%",  img:"images/wetv.jpg" },
+  { name:"Vidio",         cat:"Voucher", code:"VD", accent:"0 80% 60%",   img:"images/vidio.jpg" },
+];
+
+// ===== PRICES (loaded from harga.json) =====
+let HARGA = {};   // will be filled on load
+let HARGA_LOADED = false;
+
+// Default fallback prices
+const DEFAULT_PACKS = [
+  { name:"Paket 1", price:15000 },
+  { name:"Paket 2", price:30000 },
+  { name:"Paket 3", price:75000 },
+];
+
+async function loadHarga() {
+  try {
+    const r = await fetch("data/harga.json?v=" + Date.now());
+    if (!r.ok) throw new Error("not found");
+    const j = await r.json();
+    HARGA = { ...(j.TOPUP || {}), ...(j.VOUCHER || {}) };
+    HARGA_LOADED = true;
+  } catch(e) {
+    console.warn("harga.json tidak bisa dibaca, gunakan harga default.", e);
+    HARGA_LOADED = false;
+  }
+}
+
+function getPacksForGame(gameName) {
+  if (HARGA[gameName] && HARGA[gameName].length) return HARGA[gameName];
+  return DEFAULT_PACKS;
+}
+
+// ===== STATE =====
+const state = {
+  tab: "topup",
+  selectedGame: null,
+  currentPacks: [],
+  selectedPack: null,
+  selectedPay: "DANA",
+  promoApplied: null,
+  settings: JSON.parse(localStorage.getItem("ftuSettings") || "{}"),
+  isAdmin: sessionStorage.getItem("ftu_auth") === "ok"
+};
+
+const rupiah = v => new Intl.NumberFormat("id-ID", { style:"currency", currency:"IDR", maximumFractionDigits:0 }).format(v);
+const qs = s => document.querySelector(s);
+const getPromos = () => JSON.parse(localStorage.getItem("ftuPromos") || "[]");
+const savePromos = a => localStorage.setItem("ftuPromos", JSON.stringify(a));
+
+// ===== AUTH =====
+function updateAuthUI() {
+  const admin = state.isAdmin;
+  qs("#loginNavBtn").style.display = admin ? "none" : "block";
+  qs("#adminBadge").style.display = admin ? "inline-flex" : "none";
+  qs("#logoutBtn").style.display = admin ? "block" : "none";
+  qs("#settingsBtn").style.display = admin ? "block" : "none";
+}
+qs("#loginNavBtn").addEventListener("click", e => { e.stopPropagation(); qs("#loginPopup").classList.toggle("show"); });
+document.addEventListener("click", e => { if (!e.target.closest(".nav-right")) qs("#loginPopup").classList.remove("show"); });
+function doLogin() {
+  const u = qs("#loginUser").value.trim(), p = qs("#loginPass").value;
+  if (u === ADMIN_USER && p === ADMIN_PASS) {
+    sessionStorage.setItem("ftu_auth","ok"); state.isAdmin = true;
+    qs("#loginPopup").classList.remove("show");
+    qs("#loginUser").value = ""; qs("#loginPass").value = "";
+    qs("#loginErr").style.display = "none";
+    updateAuthUI();
+  } else {
+    qs("#loginErr").style.display = "block"; qs("#loginPass").value = "";
+    setTimeout(() => qs("#loginErr").style.display = "none", 3000);
+  }
+}
+qs("#loginDoBtn").addEventListener("click", doLogin);
+qs("#loginPass").addEventListener("keydown", e => { if (e.key==="Enter") doLogin(); });
+qs("#logoutBtn").addEventListener("click", () => {
+  if (confirm("Yakin mau logout?")) { sessionStorage.removeItem("ftu_auth"); state.isAdmin = false; updateAuthUI(); }
+});
+
+// ===== OPERATIONAL TIME =====
+function parseTime(str) {
+  const [h,m] = str.split(":").map(Number);
+  return h * 60 + m;
+}
+function updateOpStatus() {
+  const s = state.settings;
+  const openT = s.opOpen || "08:00";
+  const closeT = s.opClose || "22:00";
+  const days = s.opDays !== undefined ? s.opDays : [0,1,2,3,4,5,6];
+  const note = s.opNote || "";
+
+  const now = new Date();
+  const dayIdx = (now.getDay() + 6) % 7; // 0=Mon,6=Sun
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+  const openMin = parseTime(openT);
+  const closeMin = parseTime(closeT);
+
+  const dayOpen = days.includes(dayIdx);
+  const timeOpen = nowMin >= openMin && nowMin < closeMin;
+  const isOpen = dayOpen && timeOpen;
+
+  const DAY_NAMES = ["Senin","Selasa","Rabu","Kamis","Jumat","Sabtu","Minggu"];
+  let daysLabel = "";
+  if (days.length === 7) daysLabel = "Senin – Minggu";
+  else if (days.length === 0) daysLabel = "Tidak ada hari aktif";
+  else {
+    const sorted = [...days].sort();
+    daysLabel = sorted.map(d => DAY_NAMES[d]).join(", ");
+  }
+
+  const timeStr = `${openT} – ${closeT} WIB`;
+  const displayStr = `${daysLabel}  |  ${timeStr}${note ? "  |  " + note : ""}`;
+
+  qs("#opTimeDisplay").textContent = displayStr;
+
+  const badge = qs("#opStatusBadge");
+  const navSub = qs("#navOpStatus");
+  const navText = qs("#navOpText");
+  const dot = navSub.querySelector(".op-dot");
+
+  if (isOpen) {
+    badge.textContent = "● Buka";
+    badge.className = "op-status op-open-status";
+    dot.style.background = "#4ade80";
+    dot.style.boxShadow = "0 0 6px #4ade80";
+    navText.textContent = "Sedang Buka";
+    navSub.className = "brand-sub op-open";
+  } else {
+    badge.textContent = "● Tutup";
+    badge.className = "op-status op-closed-status";
+    dot.style.background = "#f87171";
+    dot.style.boxShadow = "0 0 6px #f87171";
+    navText.textContent = "Sedang Tutup";
+    navSub.className = "brand-sub op-closed";
+  }
+}
+
+// ===== PAYMENT LOGOS =====
+function resolveLogoSrc(val) {
+  if (!val) return "";
+  if (val.startsWith("http://") || val.startsWith("https://") || val.startsWith("data:")) return val;
+  return "images/" + val;
+}
+
+function updatePayLogos() {
+  const s = state.settings;
+  const configs = [
+    { id:"payEl0", val:s.payDana,  emoji:"💙", alt:"DANA" },
+    { id:"payEl1", val:s.payGopay, emoji:"💚", alt:"GoPay" },
+    { id:"payEl2", val:s.payQr,    emoji:"📱", alt:"QR" },
+  ];
+  configs.forEach(c => {
+    const el = qs("#"+c.id);
+    if (!el) return;
+    const src = resolveLogoSrc(c.val);
+    if (src) {
+      el.outerHTML = `<img class="pay-logo-img" id="${c.id}" src="${src}" alt="${c.alt}" onerror="this.outerHTML='<div class=\\"pay-logo-emoji\\" id=\\"${c.id}\\">${c.emoji}</div>'" />`;
+    } else {
+      if (el.tagName === "IMG") el.outerHTML = `<div class="pay-logo-emoji" id="${c.id}">${c.emoji}</div>`;
+      else { el.className = "pay-logo-emoji"; el.textContent = c.emoji; }
+    }
+  });
+}
+
+function previewPayLogo(key, val) {
+  const map = { dana:["prevDana","💙"], gopay:["prevGopay","💚"], qr:["prevQr","📱"] };
+  const [id, emoji] = map[key];
+  const el = qs("#"+id);
+  if (!el) return;
+  const src = resolveLogoSrc(val);
+  if (src) {
+    el.outerHTML = `<img src="${src}" id="${id}" alt="${key}" style="width:56px;height:36px;object-fit:contain;border-radius:8px;border:1px solid hsl(196 100% 68%/.2);background:white;padding:4px;" onerror="this.outerHTML='<div class=\\"pay-preview-placeholder\\" id=\\"${id}\\">${emoji}</div>'" />`;
+  } else {
+    if (el.tagName === "IMG") el.outerHTML = `<div class="pay-preview-placeholder" id="${id}">${emoji}</div>`;
+    else el.textContent = emoji;
+  }
+}
+window.previewPayLogo = previewPayLogo;
+
+// ===== APPLY SETTINGS =====
+function applySettings() {
+  const s = state.settings;
+  const name = s.name || "FATIR TOP UP";
+  qs("#storeNameNav").textContent = name;
+  qs("#storeNameHero").textContent = name;
+  document.title = name;
+  if (s.logo) qs("#brandLogo").src = s.logo;
+  const banner = qs("#siteBanner");
+  if (s.banner) { banner.src = s.banner; banner.classList.add("visible"); }
+  else banner.classList.remove("visible");
+  const desc = qs("#siteDesc");
+  if (s.desc) { desc.textContent = s.desc; desc.classList.add("visible"); }
+  else desc.classList.remove("visible");
+  const wa = s.wa ? s.wa.replace(/\D/g,"") : "";
+  qs("#waLink").href = wa ? `https://wa.me/${wa}` : "#";
+  qs("#waText").textContent = wa ? "Chat admin sekarang!" : "Atur nomor WA admin di Setting.";
+  updatePayLogos();
+  updateOpStatus();
+}
+
+// ===== GAME GRID =====
+function renderGames() {
+  const grid = qs("#gameGrid");
+  const keyword = qs("#searchInput").value.trim().toLowerCase();
+  const cat = qs("#categorySelect").value;
+  const source = state.tab === "topup" ? TOPUP_GAMES : VOUCHER_GAMES;
+  grid.querySelectorAll(".game-card").forEach(c => c.remove());
+  const filtered = source.filter(g => {
+    const matchText = g.name.toLowerCase().includes(keyword) || g.cat.toLowerCase().includes(keyword);
+    const finalCat = cat === "all" ? true : g.cat === cat;
+    return matchText && finalCat;
+  });
+  qs("#emptyState").style.display = filtered.length ? "none" : "block";
+  filtered.forEach(g => {
+    const card = document.createElement("button");
+    card.type = "button"; card.className = "game-card";
+    card.style.setProperty("--game-accent", g.accent);
+    let badgeHtml = "";
+    if (g.badge === "hot") badgeHtml = `<div class="game-badge badge-hot">Hot Promo</div>`;
+    else if (g.badge === "habis") badgeHtml = `<div class="game-badge badge-habis">Stok Habis</div>`;
+    else if (g.badge === "terlaris") badgeHtml = `<div class="game-badge badge-terlaris">Terlaris</div>`;
+    card.innerHTML = `
+      ${badgeHtml}
+      <img class="game-card-img" src="${g.img}" alt="${g.name}"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='grid';"
+        onload="this.nextElementSibling.style.display='none';" />
+      <div class="game-card-fallback" style="display:none;">${g.code}</div>
+      <div class="game-card-name">${g.name}</div>`;
+    if (g.badge !== "habis") {
+      card.addEventListener("click", () => openCheckout(g.name));
+    } else { card.style.opacity=".65"; card.style.cursor="not-allowed"; }
+    grid.appendChild(card);
+  });
+}
+
+// ===== TABS =====
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active"); state.tab = btn.dataset.tab;
+    if (state.tab === "voucher") qs("#categorySelect").value = "all";
+    renderGames();
+  });
+});
+
+// ===== CHECKOUT =====
+function openCheckout(gameName) {
+  state.selectedGame = gameName;
+  state.currentPacks = getPacksForGame(gameName);
+  state.selectedPack = state.currentPacks[0] || null;
+  state.promoApplied = null;
+  qs("#promoInput").value = "";
+  qs("#promoOk").style.display = "none";
+  qs("#promoErr").style.display = "none";
+  qs("#discRow").style.display = "none";
+  qs("#coGameTitle").textContent = gameName;
+  renderPacks();
+  updateSummary();
+  qs("#checkoutOverlay").classList.add("open");
+}
+function renderPacks() {
+  const grid = qs("#packGrid"); grid.innerHTML = "";
+  state.currentPacks.forEach(pack => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "pack-btn" + (state.selectedPack && state.selectedPack.name === pack.name ? " active" : "");
+    btn.innerHTML = `<b>${pack.name}</b><small>${rupiah(pack.price)}</small>`;
+    btn.addEventListener("click", () => {
+      state.selectedPack = pack; state.promoApplied = null;
+      qs("#promoInput").value = ""; qs("#promoOk").style.display = "none";
+      qs("#promoErr").style.display = "none"; qs("#discRow").style.display = "none";
+      renderPacks(); updateSummary();
+    });
+    grid.appendChild(btn);
+  });
+}
+document.querySelectorAll(".pay-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".pay-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active"); state.selectedPay = btn.dataset.pay; updateSummary();
+  });
+});
+qs("#applyPromo").addEventListener("click", () => {
+  const code = qs("#promoInput").value.trim().toUpperCase();
+  if (!code) return;
+  const found = getPromos().find(p => p.code === code);
+  if (found) {
+    state.promoApplied = found;
+    qs("#promoOk").textContent = `✅ Diskon ${found.discount}% berhasil!`;
+    qs("#promoOk").style.display = "block"; qs("#promoErr").style.display = "none";
+    qs("#discRow").style.display = "flex";
+  } else {
+    state.promoApplied = null;
+    qs("#promoErr").textContent = "❌ Kode promo tidak valid.";
+    qs("#promoErr").style.display = "block"; qs("#promoOk").style.display = "none";
+    qs("#discRow").style.display = "none";
+  }
+  updateSummary();
+});
+function updateSummary() {
+  const base = state.selectedPack ? state.selectedPack.price : 0;
+  let final = base;
+  if (state.promoApplied) {
+    const disc = Math.round(base * state.promoApplied.discount / 100);
+    final = base - disc;
+    qs("#sumDisc").textContent = `- ${rupiah(disc)} (${state.promoApplied.discount}%)`;
+  }
+  qs("#sumGame").textContent = state.selectedGame || "-";
+  qs("#sumPack").textContent = state.selectedPack ? state.selectedPack.name : "-";
+  qs("#sumPay").textContent = state.selectedPay;
+  qs("#sumTotal").textContent = rupiah(final);
+}
+function createOrder() {
+  if (!state.selectedPack) return alert("Pilih paket dahulu.");
+  const pid = qs("#playerId").value.trim();
+  if (!pid) return alert("Masukkan ID game dahulu.");
+  const srv = qs("#serverId").value.trim() || "-";
+  const base = state.selectedPack.price;
+  let final = base, promoInfo = "";
+  if (state.promoApplied) {
+    const disc = Math.round(base * state.promoApplied.discount / 100);
+    final = base - disc;
+    promoInfo = `%0APromo: ${state.promoApplied.code} (-${state.promoApplied.discount}%)%0ADiskon: -${rupiah(disc)}`;
+  }
+  const store = state.settings.name || "FATIR TOP UP";
+  const msg = `Halo admin ${store}, saya mau top up:%0A%0AGame: ${state.selectedGame}%0AID: ${pid}%0AServer: ${srv}%0APaket: ${state.selectedPack.name}%0APembayaran: ${state.selectedPay}${promoInfo}%0ATotal: ${rupiah(final)}`;
+  const wa = (state.settings.wa || "").replace(/\D/g,"");
+  if (wa) window.open(`https://wa.me/${wa}?text=${msg}`, "_blank");
+  else alert(decodeURIComponent(msg.replaceAll("%0A","\n")) + "\n\n⚠️ Tambahkan nomor WA admin di Setting.");
+}
+qs("#coClose").addEventListener("click", () => qs("#checkoutOverlay").classList.remove("open"));
+qs("#checkoutOverlay").addEventListener("click", e => { if (e.target === qs("#checkoutOverlay")) qs("#checkoutOverlay").classList.remove("open"); });
+qs("#orderBtn").addEventListener("click", createOrder);
+qs("#searchInput").addEventListener("input", renderGames);
+qs("#categorySelect").addEventListener("change", renderGames);
+
+// ===== SETTINGS =====
+function fillSettingsForm() {
+  const s = state.settings;
+  qs("#sName").value = s.name || "";
+  qs("#sLogo").value = s.logo || "";
+  qs("#sWa").value = s.wa || "";
+  qs("#sBanner").value = s.banner || "";
+  qs("#sDesc").value = s.desc || "";
+  qs("#sOpOpen").value = s.opOpen || "08:00";
+  qs("#sOpClose").value = s.opClose || "22:00";
+  qs("#sOpNote").value = s.opNote || "";
+  const days = s.opDays !== undefined ? s.opDays : [0,1,2,3,4,5,6];
+  document.querySelectorAll("#opDayGrid input[type=checkbox]").forEach(cb => {
+    cb.checked = days.includes(parseInt(cb.dataset.day));
+  });
+  // payment logos - fill inputs and preview
+  const pLogoDana = qs("#pLogoDana"); pLogoDana.value = s.payDana || "";
+  const pLogoGopay = qs("#pLogoGopay"); pLogoGopay.value = s.payGopay || "";
+  const pLogoQr = qs("#pLogoQr"); pLogoQr.value = s.payQr || "";
+  previewPayLogo("dana", s.payDana || "");
+  previewPayLogo("gopay", s.payGopay || "");
+  previewPayLogo("qr", s.payQr || "");
+  renderPromoList();
+}
+function renderPromoList() {
+  const promos = getPromos(), list = qs("#promoList");
+  if (!promos.length) { list.innerHTML = '<div style="color:hsl(218 26% 74%);font-size:.82rem;">Belum ada kode promo.</div>'; return; }
+  list.innerHTML = promos.map((p,i) => `
+    <div class="promo-item">
+      <div><div class="promo-code">${p.code}</div><div class="promo-disc">Diskon ${p.discount}%</div></div>
+      <button class="promo-del" data-i="${i}" type="button">Hapus</button>
+    </div>`).join("");
+  list.querySelectorAll(".promo-del").forEach(b => {
+    b.addEventListener("click", () => { const a=getPromos(); a.splice(+b.dataset.i,1); savePromos(a); renderPromoList(); });
+  });
+}
+qs("#addPromoBtn").addEventListener("click", () => {
+  const code = qs("#newCode").value.trim().toUpperCase();
+  const disc = parseInt(qs("#newDisc").value);
+  if (!code || !disc || disc<1 || disc>99) { alert("Isi kode dan diskon (1-99%)!"); return; }
+  const a = getPromos();
+  if (a.find(p => p.code===code)) { alert("Kode sudah ada!"); return; }
+  a.push({ code, discount:disc }); savePromos(a);
+  qs("#newCode").value = ""; qs("#newDisc").value = "";
+  renderPromoList();
+});
+qs("#settingsBtn").addEventListener("click", () => { fillSettingsForm(); qs("#settingsDialog").showModal(); });
+qs("#cancelSettings").addEventListener("click", () => qs("#settingsDialog").close());
+qs("#saveSettings").addEventListener("click", () => {
+  const opDays = [];
+  document.querySelectorAll("#opDayGrid input[type=checkbox]").forEach(cb => {
+    if (cb.checked) opDays.push(parseInt(cb.dataset.day));
+  });
+  state.settings = {
+    name: qs("#sName").value.trim() || "FATIR TOP UP",
+    logo: qs("#sLogo").value.trim(),
+    wa: qs("#sWa").value.trim(),
+    banner: qs("#sBanner").value.trim(),
+    desc: qs("#sDesc").value.trim(),
+    opOpen: qs("#sOpOpen").value || "08:00",
+    opClose: qs("#sOpClose").value || "22:00",
+    opDays,
+    opNote: qs("#sOpNote").value.trim(),
+    payDana: qs("#pLogoDana").value.trim(),
+    payGopay: qs("#pLogoGopay").value.trim(),
+    payQr: qs("#pLogoQr").value.trim(),
+  };
+  localStorage.setItem("ftuSettings", JSON.stringify(state.settings));
+  applySettings();
+  qs("#settingsDialog").close();
+});
+
+// ===== WA =====
+let waOpen = false;
+qs("#waBtn").addEventListener("click", () => { waOpen=!waOpen; qs("#waPopup").classList.toggle("show",waOpen); });
+document.addEventListener("click", e => { if (!e.target.closest("#waBtn")&&!e.target.closest("#waPopup")) { waOpen=false; qs("#waPopup").classList.remove("show"); } });
+
+// ===== INIT =====
+async function init() {
+  await loadHarga();
+  updateAuthUI();
+  applySettings();
+  renderGames();
+  setInterval(updateOpStatus, 30000); // refresh status every 30s
+}
+init();
+</script>
+</body>
+</html>
