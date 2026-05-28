@@ -1,0 +1,384 @@
+{
+  "_PETUNJUK": {
+    "cara_edit_harga": "Ubah angka 'price' sesuai harga baru (dalam Rupiah, tanpa titik/koma)",
+    "cara_tambah_paket": "Tambahkan baris baru { \"name\": \"Nama Paket\", \"price\": 50000 } di dalam array game yang diinginkan",
+    "cara_tambah_game_baru": "Tambahkan key baru di bagian TOPUP atau VOUCHER, ikuti format yang sudah ada",
+    "cara_hapus_paket": "Hapus baris { name, price } yang tidak diinginkan",
+    "catatan_penting": "Setelah edit, simpan file ini lalu refresh website. Pastikan format JSON tetap valid (gunakan jsonlint.com untuk cek)."
+  },
+
+  "TOPUP": {
+"Mobile Legend": [
+      { "name": "3 Diamond", "price": 1167 },
+      { "name": "5 Diamond", "price": 1482 },
+      { "name": "12 (11+1) Diamond", "price": 3338 },
+      { "name": "19 (17+2) Diamond", "price": 4793 },
+      { "name": "28 (25+3) Diamond", "price": 7184 },
+      { "name": "36 (33+3) Diamond", "price": 10850 },
+      { "name": "44 (40+4) Diamond", "price": 12751 },
+      { "name": "56 (51+5) Diamond", "price": 16170 },
+      { "name": "59 (53+6) Diamond", "price": 16567 },
+      { "name": "74 (69+5) Diamond", "price": 21459 },
+      { "name": "85 (77+8) Diamond", "price": 24245 },
+      { "name": "86 (78+8) Diamond", "price": 23962 },
+      { "name": "100 Diamond", "price": 27995 },
+      { "name": "112 (102+10) Diamond", "price": 32118 },
+      { "name": "144 (130+14) Diamond", "price": 41477 },
+      { "name": "170 (154+16) Diamond", "price": 50234 },
+      { "name": "172 (156+16) Diamond", "price": 49989 },
+      { "name": "185 (167+18) Diamond", "price": 52144 },
+      { "name": "222 (200+22) Diamond", "price": 62385 },
+      { "name": "229 (207+22) Diamond", "price": 67587 },
+      { "name": "240 (217+23) Diamond", "price": 67820 },
+      { "name": "257 (234+23) Diamond", "price": 73306 },
+      { "name": "264 Diamond", "price": 83409 },
+      { "name": "278 (251+27) Diamond", "price": 82625 },
+      { "name": "284 (254+30) Diamond", "price": 81870 },
+      { "name": "296 (256+40) Diamond", "price": 84006 },
+      { "name": "301 (261+40) Diamond", "price": 88353 },
+      { "name": "344 (312+32) Diamond", "price": 99565 },
+      { "name": "345 (301+44) Diamond", "price": 101442 },
+      { "name": "355 (309+46) Diamond", "price": 104080 },
+      { "name": "370 (333+37) Diamond", "price": 112881 },
+      { "name": "374 (326+48) Diamond", "price": 110233 },
+      { "name": "381 (333+48) Diamond", "price": 111859 },
+      { "name": "384 Diamond", "price": 153845 },
+      { "name": "408 (367+41) Diamond", "price": 116094 },
+      { "name": "425 (373+52) Diamond", "price": 125101 },
+      { "name": "429 (390+39) Diamond", "price": 122266 },
+      { "name": "448 Diamond", "price": 144027 },
+      { "name": "460 Diamond", "price": 151570 },
+      { "name": "500 Diamond", "price": 155003 },
+      { "name": "512 (461+51) Diamond", "price": 150541 },
+      { "name": "514 (468+46) Diamond", "price": 147496 },
+      { "name": "518 Diamond", "price": 155898 },
+      { "name": "522 (471+51) Diamond", "price": 153797 },
+      { "name": "568 (503+65) Diamond", "price": 162510 },
+      { "name": "600 (568+32) Diamond", "price": 168780 },
+      { "name": "601 (533+68) Diamond", "price": 173267 },
+      { "name": "642 Diamond", "price": 195377 },
+      { "name": "706 (625+81) Diamond", "price": 198649 },
+      { "name": "712 (633+79) Diamond", "price": 205253 },
+      { "name": "717 (638+79) Diamond", "price": 206891 },
+      { "name": "875 (774+101) Diamond", "price": 242629 },
+      { "name": "963 (859+104) Diamond", "price": 266240 },
+      { "name": "965 (856+109) Diamond", "price": 277766 },
+      { "name": "977 (867+110) Diamond", "price": 281563 },
+      { "name": "1050 (937+113) Diamond", "price": 291580 },
+      { "name": "1134 (1008+126) Diamond", "price": 325844 },
+      { "name": "1136 (1006+130) Diamond", "price": 325171 },
+      { "name": "1139 (1013+126) Diamond", "price": 327587 },
+      { "name": "1159 (1031+128) Diamond", "price": 332853 },
+      { "name": "1164 (1036+128) Diamond", "price": 334482 },
+      { "name": "1183 (1041+142) Diamond", "price": 339853 },
+      { "name": "1220 (1159+61) Diamond", "price": 350075 },
+      { "name": "1230 (1083+147) Diamond", "price": 353412 },
+      { "name": "1368 (1218+150) Diamond", "price": 393493 },
+      { "name": "1412 (1250+162) Diamond", "price": 405833 },
+      { "name": "1443 (1277+166) Diamond", "price": 412450 },
+      { "name": "1453 (1295+158) Diamond", "price": 419009 },
+      { "name": "1507 (1335+172) Diamond", "price": 431432 },
+      { "name": "1672 (1484+188) Diamond", "price": 479696 },
+      { "name": "1704 (1509+195) Diamond", "price": 488322 },
+      { "name": "1750 (1548+202) Diamond", "price": 498403 },
+      { "name": "2010 (1708+302) Diamond", "price": 541461 },
+      { "name": "2180 (1862+318) Diamond", "price": 592169 },
+      { "name": "2195 (1860+335) Diamond", "price": 598701 },
+      { "name": "2199 (1879+320) Diamond", "price": 597544 },
+      { "name": "2350 (2017+333) Diamond", "price": 642418 },
+      { "name": "2382 (2033+349) Diamond", "price": 651608 },
+      { "name": "2536 (2182+354) Diamond", "price": 696568 },
+      { "name": "2578 (2211+367) Diamond", "price": 705809 },
+      { "name": "2885 (2482+403) Diamond", "price": 791175 },
+      { "name": "2904 (2499+405) Diamond", "price": 784995 },
+      { "name": "3453 (2985+468) Diamond", "price": 952639 },
+      { "name": "3481 (3010+471) Diamond", "price": 963389 },
+      { "name": "3693 (3202+491) Diamond", "price": 1025079 },
+      { "name": "4020 (3416+604) Diamond", "price": 1084513 },
+      { "name": "4404 (3763+641) Diamond", "price": 1197165 },
+      { "name": "4678 (4001+677) Diamond", "price": 1273492 },
+      { "name": "4830 (4003+827) Diamond", "price": 1300844 },
+      { "name": "6030 (5124+906) Diamond", "price": 1626775 },
+      { "name": "6257 (5274+983) Diamond", "price": 1712360 },
+      { "name": "6840 (5711+1129) Diamond", "price": 1841964 },
+      { "name": "7195 (6020+1175) Diamond", "price": 1945899 },
+      { "name": "7660 (6442+1218) Diamond", "price": 2078508 },
+      { "name": "7723 (6487+1236) Diamond", "price": 2096918 },
+      { "name": "8040 (6832+1208) Diamond", "price": 2167103 },
+      { "name": "8303 (7005+1297) Diamond", "price": 2259232 }
+      { "name": "1X Weekly Diamond Pass 220 (80+20/Hari)", "price": 28900 },
+      { "name": "2X Weekly Diamond Pass 440 (80+20/Hari)", "price": 57300 },
+      { "name": "3X Weekly Diamond Pass 660 (80+20/Hari)", "price": 86100 },
+      { "name": "4X Weekly Diamond Pass 880 (80+20/Hari)", "price": 115000 },
+      { "name": "5X Weekly Diamond Pass 1100 (80+20/Hari)", "price": 143500 },
+      { "name": "Mobile Legend Twilight Pass", "price": 151100 }
+      ],
+    "Free Fire": [
+      { "name": "5 Diamond", "price": 861 },
+      { "name": "12 Diamond", "price": 1855 },
+      { "name": "50 Diamond", "price": 8200 },
+      { "name": "70 Diamond", "price": 10000 },
+      { "name": "100 Diamond", "price": 14500 },
+      { "name": "140 Diamond", "price": 18000 },
+      { "name": "210 Diamond", "price": 27027 },
+      { "name": "300 Diamond", "price": 40775 },
+      { "name": "355 Diamond", "price": 48813 },
+      { "name": "500 Diamond", "price": 63717 },
+      { "name": "720 Diamond", "price": 95283 },
+      { "name": "1000 Diamond", "price": 128685 },
+      { "name": "1450 Diamond", "price": 185282 },
+      { "name": "2180 Diamond", "price": 270666 },
+      { "name": "3640 Diamond", "price": 460100 },
+      { "name": "4000 Diamond", "price": 494648 }, 
+      { "name": "7290 Diamond", "price": 900090 }, 
+      { "name": "Membership Mingguan", "price": 29000 }, 
+      { "name": "Membership Bulanan", "price": 90000 }, 
+      { "name": "Booyah Pass Card", "price": 43000 }
+    ],
+    "Free Fire Max": [
+      { "name": "5 Diamond", "price": 861 },
+      { "name": "12 Diamond", "price": 1855 },
+      { "name": "50 Diamond", "price": 8200 },
+      { "name": "70 Diamond", "price": 10000 },
+      { "name": "100 Diamond", "price": 14500 },
+      { "name": "140 Diamond", "price": 18000 },
+      { "name": "210 Diamond", "price": 27027 },
+      { "name": "300 Diamond", "price": 40775 },
+      { "name": "355 Diamond", "price": 48813 },
+      { "name": "500 Diamond", "price": 63717 },
+      { "name": "720 Diamond", "price": 95283 },
+      { "name": "1000 Diamond", "price": 128685 },
+      { "name": "1450 Diamond", "price": 185282 },
+      { "name": "2180 Diamond", "price": 270666 },
+      { "name": "3640 Diamond", "price": 460100 },
+      { "name": "4000 Diamond", "price": 494648 }, 
+      { "name": "7290 Diamond", "price": 900090 }, 
+      { "name": "Membership Mingguan", "price": 29000 }, 
+      { "name": "Membership Bulanan", "price": 90000 }, 
+      { "name": "Booyah Pass Card", "price": 43000 }
+    ],
+    "PUBG Mobile": [
+      { "name": "15 UC", "price": 8257 },
+      { "name": "25 UC", "price": 15814 },
+      { "name": "35 UC", "price": 14450 },
+      { "name": "50 UC", "price": 15657 },
+      { "name": "60 UC", "price": 15225 },
+      { "name": "70 UC", "price": 30461 },
+      { "name": "100 UC", "price": 32330 },
+      { "name": "125 UC", "price": 50737 },
+      { "name": "150 UC", "price": 52013 },
+      { "name": "200 UC", "price": 69333 },
+      { "name": "210 UC", "price": 66151 },
+      { "name": "250 UC", "price": 85457 },
+      { "name": "300 UC", "price": 87545 },
+      { "name": "350 UC", "price": 104801 },
+      { "name": "375 UC", "price": 104847 },
+      { "name": "500 UC", "price": 140418 },
+      { "name": "525 UC", "price": 156804 },
+      { "name": "700 UC", "price": 177749 },
+      { "name": "750 UC", "price": 194982 },
+      { "name": "1000 UC", "price": 259471 },
+      { "name": "1100 UC", "price": 296403 },
+      { "name": "1250 UC", "price": 348536 },
+      { "name": "1500 UC", "price": 386654 },
+      { "name": "1750 UC", "price": 407830 },
+      { "name": "2500 UC", "price": 574362 },
+      { "name": "Weekly Deal Pack 1", "price": 13665 },
+      { "name": "Weekly Deal Pack 2", "price": 38306 },
+      { "name": "Weekly Mythic Emblem Value Pack", "price": 38306 },
+      { "name": "Elite Pass Plus + Kupon Peti Klasik", "price": 376478 }
+    ],
+    "Genshin Impact": [
+      { "name": "60 Crystals", "price": 11671 },
+      { "name": "300+30 Crystals", "price": 64800 },
+      { "name": "980+110 Crystals", "price": 195980 },
+      { "name": "1980+260 Crystals", "price": 425080 },
+      { "name": "3280+600 Crystals", "price": 676472 }, 
+      { "name": "Blesing Welkin Moon", "price": 53530 }
+    ],
+    "Honkai: Star Rail": [
+      { "name": "Stock Habis", "price": 0 }
+    ],
+    "Zenless Zone Zero": [
+      { "name": "Stock Habis", "price": 0 }
+    ],
+    "Wuthering Waves": [
+      { "name": "Stock Habis", "price": 0 }
+    ],
+    "Valorant": [
+      { "name": "Stock Habis", "price": 0 }
+    ],
+    "Call Of Duty Mobile": [
+      { "name": "COD Mobile 26 + 5 CP", "price": 4990 },
+      { "name": "COD Mobile 53 + 9 CP", "price": 9510 },
+      { "name": "COD Mobile 106 + 21 CP", "price": 20160 },
+      { "name": "COD Mobile 264 + 53 CP", "price": 48660 },
+      { "name": "COD Mobile 528 + 106 CP", "price": 102520 },
+      { "name": "COD Mobile 1056 + 317 CP", "price": 195090 },
+      { "name": "COD Mobile 1584 + 475 CP", "price": 231830 }
+    ],
+    "Arena Of Valor": [
+      { "name": "40 AOV Game", "price": 9940 },
+      { "name": "90 AOV Game", "price": 19830 },
+      { "name": "230 AOV Game", "price": 50960 },
+      { "name": "470 AOV Game", "price": 102240 },
+      { "name": "950 AOV Game", "price": 205590 },
+      { "name": "1430 AOV Game", "price": 311475 },
+      { "name": "2390 AOV Game", "price": 520290 }
+    ],
+    "Wild Rift": [
+      { "name": "Stock Habis", "price": 0 }
+    ],
+    "Honor of Kings": [
+      { "name": "Stock Habis", "price": 0 }
+    ],
+    "Clash of Clans": [
+      { "name": "Stock Habis", "price": 0 }
+    ],
+    "Clash Royale": [
+      { "name": "Stock Habis", "price": 0 }
+    ],
+    "Brawl Stars": [
+      { "name": "Stock Habis", "price": 0 }
+    ],
+  "Roblox": [
+      { "name": "100 RBX", "price": 13470 },
+      { "name": "200 RBX", "price": 22530 },
+      { "name": "300 RBX", "price": 33790 },
+      { "name": "400 RBX", "price": 43250 },
+      { "name": "500 RBX", "price": 58990 },
+      { "name": "600 RBX", "price": 70790 },
+      { "name": "700 RBX", "price": 82590 },
+      { "name": "800 RBX", "price": 94380 },
+      { "name": "900 RBX", "price": 106180 },
+      { "name": "1000 RBX", "price": 117980 },
+      { "name": "1500 RBX", "price": 176970 },
+      { "name": "2000 RBX", "price": 235950 }
+    ],
+    "FC Mobile": [
+      { "name": "Close Order", "price": 0 }
+    ],
+    "Stumble Guys": [
+      { "name": "Stock Habis", "price": 0 }
+    ],
+    "Point Blank": [
+      { "name": "Stock Habis", "price": 0 }
+    ],
+    "Blood Strike": [
+      { "name": "Stock Habis", "price": 0 }
+    ],
+    "Ragnarok X": [
+      { "name": "60 ROX Point", "price": 15000 },
+      { "name": "300 ROX Point", "price": 75000 },
+      { "name": "980 ROX Point", "price": 229000 }
+    ],
+    "Eggy Party": [
+      { "name": "Eggy Party 10 Coins", "price": 2120 },
+      { "name": "Eggy Party 60 + 3 Coins", "price": 11660 },
+      { "name": "Eggy Party Weekly Egg Coin Pack", "price": 12270 },
+      { "name": "Eggy Party 120 + 6 Coins", "price": 23320 },
+      { "name": "Eggy Party Yoyo Membership", "price": 29030 },
+      { "name": "Eggy Party Shiny Coin Jar", "price": 37090 },
+      { "name": "Eggy Party 300 + 24 Coins", "price": 60400 },
+      { "name": "Eggy Party 700 + 57 Coins", "price": 140450 },
+      { "name": "Eggy Party 1.380 + 144 Coins", "price": 276650 },
+      { "name": "Eggy Party 2.080 + 216 Coins", "price": 416780 },
+      { "name": "Eggy Party 3.450 + 423 Coins", "price": 690990 }
+  ], 
+     "Top Eleven": [
+      { "name": "Top Eleven 14 Tokens", "price": 25840 },
+      { "name": "Top Eleven 37 Tokens", "price": 78520 },
+      { "name": "Top Eleven 80 Tokens", "price": 155810 },
+      { "name": "Top Eleven 35 Gems", "price": 167900 },
+      { "name": "Top Eleven 80 Gems", "price": 346170 },
+      { "name": "Top Eleven 220 Gems", "price": 791930 },
+      { "name": "Top Eleven 1.031 Tokens", "price": 1562890 }
+    ],
+     "Arena Breakout": [
+      { "name": "Arena Breakout 60 Bonds", "price": 16740 },
+      { "name": "Arena Breakout 310 Bonds", "price": 83340 },
+      { "name": "Arena Breakout 630 Bonds", "price": 166210 },
+      { "name": "Arena Breakout 1.580 Bonds", "price": 417270 },
+      { "name": "Arena Breakout 3.200 Bonds", "price": 831330 },
+      { "name": "Arena Breakout Pilihan Pemula", "price": 15870 },
+      { "name": "Arena Breakout Kotak Anti Peluru 30 Hari", "price": 46120 },
+      { "name": "Arena Breakout Percobaan Elite 30 Hari", "price": 76530 },
+      { "name": "Arena Breakout Battle Pass Lanjutan", "price": 76550 }
+    ],
+     "Marvel Super War": [
+      { "name": "55 Star Credit", "price": 15680 },
+      { "name": "275 Star Credit", "price": 81230 },
+      { "name": "565 Star Credit", "price": 161150 }
+    ],
+     "Speed Drifter": [
+      { "name": "10 Diamond Speed Drifter", "price": 2380 },
+      { "name": "25 Diamond Speed Drifter", "price": 5320 },
+      { "name": "56 Diamond Speed Drifter", "price": 10630 },
+      { "name": "112 Diamond Speed Drifter", "price": 19670 },
+      { "name": "282 Diamond Speed Drifter", "price": 53450 },
+      { "name": "579 Diamond Speed Drifter", "price": 99700 },
+      { "name": "1230 Diamond Speed Drifter", "price": 198620 }
+    ],
+     "Life After": [
+      { "name": "25 Credit Life After", "price": 5710 },
+      { "name": "65 Credit Life After", "price": 15230 },
+      { "name": "81 Credit Life After", "price": 15020 },
+      { "name": "242 Credit Life After", "price": 71120 },
+      { "name": "330 Credit Life After", "price": 74440 },
+      { "name": "413 Credit Life After", "price": 111000 },
+      { "name": "558 Credit Life After", "price": 121520 },
+      { "name": "913 Credit Life After", "price": 216560 },
+      { "name": "1108 Credit Life After", "price": 228970 }
+    ],
+     "Zepeto": [
+      { "name": "Zepeto 4.680 Coins", "price": 14770 },
+      { "name": "Zepeto 29 Zems", "price": 35130 },
+      { "name": "Zepeto 60 Zems", "price": 74670 },
+      { "name": "Zepeto 196 Zems", "price": 223450 }
+    ], 
+     "Hago": [
+      { "name": "Stock Habis", "price": 0 }
+    ],
+     "Tumile": [
+      { "name": "360 Coins", "price": 48830 },
+      { "name": "650 Coins", "price": 80330 },
+      { "name": "1250 Coins", "price": 151580 },
+      { "name": "1800 Coins", "price": 208450 },
+      { "name": "3500 Coins", "price": 384450 }
+    ]
+  },
+
+  "VOUCHER": {
+    "Roblox Instant": [
+      { "name": "80 RBX", "price": 15750 },
+      { "name": "160 RBX", "price": 31500 },
+      { "name": "240 RBX", "price": 47250 },
+      { "name": "320 RBX", "price": 63000 },
+      { "name": "500 RBX", "price": 75900 },
+      { "name": "1000 RBX", "price": 154000 },
+      { "name": "1500 RBX", "price": 231000 },
+      { "name": "2000 RBX", "price": 303600 }
+    ],
+    "Voucher Google Play": [
+      { "name": "Google Play ID 5 Ribu", "price": 5500 },
+      { "name": "Google Play ID 10 Ribu", "price": 10680 },
+      { "name": "Google Play ID 20 Ribu", "price": 21280 },
+      { "name": "Google Play ID 50 Ribu", "price": 55060 },
+      { "name": "Google Play ID 100 Ribu", "price": 109640 },
+      { "name": "Google Play ID 150 Ribu", "price": 164830 },
+      { "name": "Google Play ID 300 Ribu", "price": 329740 }
+    ],
+  "Voucher Garena": [
+      { "name": "Voucher 33 Shell", "price": 9890 },
+      { "name": "Voucher 66 Shell", "price": 19220 },
+      { "name": "Voucher 165 Shell", "price": 51290 },
+      { "name": "Voucher 330 Shell", "price": 104130 }
+    ],
+    "WeTV": [
+      { "name": "Stock Habis", "price": 0 }
+    ],
+    "Vidio": [
+      { "name": "Stock Habis", "price": 0 }
+    ]
+  }
+}
